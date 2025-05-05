@@ -1,0 +1,248 @@
+/* Experiment no. 15
+   Date : 29-4-25
+   Binary tree with linked list..
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+struct TreeNode* createNode(int data) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    if (!newNode) {
+        printf("Memory error!\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+struct TreeNode* insert(struct TreeNode* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+
+    struct TreeNode* queue[100];
+    int front = 0, rear = 0;
+    queue[rear++] = root;
+
+    while (front != rear) {
+        struct TreeNode* temp = queue[front++];
+        if (temp->left == NULL) {
+            temp->left = createNode(data);
+            break;
+        } else if (temp->right == NULL) {
+            temp->right = createNode(data);
+            break;
+        } else {
+            queue[rear++] = temp->left;
+            queue[rear++] = temp->right;
+        }
+    }
+
+    return root;
+}
+
+void inorder(struct TreeNode* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+void preorder(struct TreeNode* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void postorder(struct TreeNode* root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+struct TreeNode* search(struct TreeNode* root, int target) {
+    if (root == NULL) return NULL;
+
+    struct TreeNode* queue[100];
+    int front = 0, rear = 0;
+    queue[rear++] = root;
+
+    while (front != rear) {
+        struct TreeNode* temp = queue[front++];
+        if (temp->data == target)
+            return temp;
+        if (temp->left != NULL)
+            queue[rear++] = temp->left;
+        if (temp->right != NULL)
+            queue[rear++] = temp->right;
+    }
+
+    return NULL;
+}
+
+struct TreeNode* findDeepest(struct TreeNode* root, struct TreeNode** parent) {
+    if (root == NULL)
+        return NULL;
+
+    struct TreeNode* queue[100];
+    int front = 0, rear = 0;
+    queue[rear++] = root;
+    struct TreeNode* temp;
+
+    *parent = NULL;
+    while (front < rear) {
+        temp = queue[front++];
+        if (temp->left != NULL) {
+            *parent = temp;
+            queue[rear++] = temp->left;
+        }
+        if (temp->right != NULL) {
+            *parent = temp;
+            queue[rear++] = temp->right;
+        }
+    }
+
+    return temp;
+}
+
+void deleteNode(struct TreeNode* root, int value) {
+    struct TreeNode* target = search(root, value);
+    if (target == NULL) {
+        printf("Element Not Found!!!!\n");
+        return;
+    }
+
+    struct TreeNode* parent = NULL;
+    struct TreeNode* deepest = findDeepest(root, &parent);
+
+    if (deepest == NULL) {
+        printf("Tree is empty.\n");
+        return;
+    }
+
+    target->data = deepest->data;
+
+    if (parent != NULL) {
+        if (parent->right == deepest) {
+            free(parent->right);
+            parent->right = NULL;
+        } else {
+            free(parent->left);
+            parent->left = NULL;
+        }
+    } else {
+        free(root);
+        root = NULL;
+    }
+
+    printf("Element Deleted !!!\n");
+}
+
+void levelOrder(struct TreeNode* root) {
+    if (root == NULL)
+        return;
+
+    struct TreeNode* queue[100];
+    int front = 0, rear = 0;
+
+    queue[rear++] = root;
+
+    while (front < rear) {
+        struct TreeNode* temp = queue[front++];
+        printf("%d ", temp->data);
+
+        if (temp->left != NULL)
+            queue[rear++] = temp->left;
+        if (temp->right != NULL)
+            queue[rear++] = temp->right;
+    }
+}
+
+void freeTree(struct TreeNode* root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
+    }
+}
+
+int main() {
+    struct TreeNode* root = NULL;
+    int choice, value;
+
+    while (1) {
+        printf("\n\n--- Binary Tree Operations ---\n");
+        printf("1. Insert\n");
+        printf("2. Preorder Traversal\n");
+        printf("3. Inorder Traversal\n");
+        printf("4. Postorder Traversal\n");
+        printf("5. Search\n");
+        printf("6. Delete\n");
+        printf("7. Level Order Traversal\n");
+        printf("8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter value to insert: ");
+            scanf("%d", &value);
+            root = insert(root, value);
+            break;
+        case 2:
+            printf("Preorder Traversal: ");
+            preorder(root);
+            printf("\n");
+            break;
+        case 3:
+            printf("Inorder Traversal: ");
+            inorder(root);
+            printf("\n");
+            break;
+        case 4:
+            printf("Postorder Traversal: ");
+            postorder(root);
+            printf("\n");
+            break;
+        case 5:
+            printf("Enter value to search: ");
+            scanf("%d", &value);
+            if (search(root, value) != NULL)
+                printf("Value %d found in the tree.\n", value);
+            else
+                printf("Value %d not found in the tree.\n", value);
+            break;
+        case 6:
+            printf("Enter value to delete: ");
+            scanf("%d", &value);
+            deleteNode(root, value);
+            break;
+        case 7:
+            printf("Level Order Traversal: ");
+            levelOrder(root);
+            printf("\n");
+            break;
+        case 8:
+            printf("Exiting program.\n");
+            freeTree(root);
+            exit(0);
+        default:
+            printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
