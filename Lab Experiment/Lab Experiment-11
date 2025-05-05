@@ -1,0 +1,99 @@
+//Implement a Queue using Linked List and develop functions to perform enqueue and dequeue operations. 
+//16 April 2025
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+typedef struct Node{
+    int data;
+    struct Node* next;
+} Node;
+Node* front = NULL;
+Node* rear = NULL;
+void enqueue(int data){
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL){
+        printf("Queue Overflow\n");
+        return;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    if (rear == NULL){
+        front = rear = newNode;
+    } else{
+        rear->next = newNode;
+        rear = newNode;
+    }
+    printf("%d inserted\n", data);
+}
+int dequeue(){
+    if (front == NULL){
+        printf("Queue Underflow\n");
+        return -1;
+    }
+    Node* temp = front;
+    front = front -> next;
+    if (front == NULL){
+        front = rear = NULL;
+    }
+    int val = temp -> data;
+    free(temp);
+    return val;
+}
+int peek(){
+    if (front == NULL){
+        printf("Queue is empty\n");
+        return -1;
+    }
+    return front->data;
+}
+void display(){
+    if (front == NULL){
+        printf("Queue is empty\n");
+        return;
+    }
+    Node* temp = front;
+    while (temp != NULL){
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+int main(){
+    while(1){
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+        int choice,val,deqVal;
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch(choice){
+            case 1:
+                printf("Enter value: ");
+                // int val;
+                scanf("%d", &val);
+                enqueue(val);
+                break;
+            case 2:
+                deqVal = dequeue();
+                if (deqVal != -1){
+                    printf("%d dequeued\n", deqVal);
+                }
+                break;
+            case 3:
+                printf("Element at front: %d\n", peek());
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid Choice\n");
+        }
+        printf("\n");
+        //system("Pause");
+    }
+    return 0;
+} 
