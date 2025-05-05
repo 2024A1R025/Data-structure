@@ -1,0 +1,241 @@
+
+// Cicular singly linked list(lab experiment 9)(10 April)
+#include<stdio.h>
+#include<stdlib.h>
+ struct Node{
+    int data;
+    struct Node *next;
+};
+struct Node* head = NULL;
+struct Node* createNode(int ele){
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp -> data = ele;
+    temp -> next = NULL;
+    return temp;
+}
+
+void insertnodeinbeg(int ele){
+struct Node* newNode = createNode(ele);
+if(head==NULL){
+    head = newNode;
+    head->next = head;
+}
+else{
+  newNode->next=head;
+  struct Node * temp = head;
+  while(temp->next != head){
+    temp = temp->next;
+  }
+  temp->next = newNode;
+  head = newNode;
+}
+printf("Node Inserted !!!\n");
+}
+
+void insertnodeinend(int ele){
+struct Node* newNode = createNode(ele);
+if(head==NULL){
+    head = newNode;
+    head->next = head;
+}
+else{
+    struct Node* temp = head;
+    while(temp->next != head){
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->next = head;
+}
+printf("Node Inserted !!!\n");
+}
+void insertnodeinanypos(int ele, int pos){
+    if(head==NULL){
+        printf("List is empty");
+    }
+    else if (pos==1)
+    {
+        insertnodeinbeg(ele);
+    }
+    else{
+        struct Node* temp = head;
+        int i=1;
+        while(i<pos-1 && temp != head){
+            temp = temp->next;
+            i++;
+        } 
+        if(temp->next != head && pos>0){
+            struct Node* newNode = createNode(ele);
+            newNode->next = temp->next;
+            temp->next = newNode;
+            printf("Node Inserted !!!\n");
+        }
+        else{
+                printf("Position not found");
+            }
+    }
+
+}
+
+void deletenodefrombeg(){
+    if(head==NULL){
+        printf("List is empty\n");
+    }
+    else if(head->next == head){
+        struct Node* temp = head;
+        head = NULL;
+        free(temp);
+        printf("Node Deleted !!!\n");
+    }
+    else{
+        struct Node* temp = head;
+        while(temp->next != head){
+            temp = temp->next;
+        }
+        struct Node* t = head;
+        head = head->next;
+        temp->next = head;
+        free(t);
+        printf("Node Deleted !!!\n");
+    }
+    }
+
+void deletenodefromend(){  
+    if(head==NULL){
+        printf("List is empty\n");
+    }
+    else if(head->next == head){
+       struct Node* temp = head;
+        head = NULL;
+        free(temp);
+        printf("Node Deleted !!!\n");
+    }
+    else{
+        struct Node* temp = head;
+        while(temp->next->next != head){
+            temp = temp->next;
+        }
+        struct Node* t = temp->next;
+        temp->next = head;
+        free(t);
+        printf("Node Deleted !!!\n");
+    }
+}
+void deletenodefromanypos(int pos){
+    if(head==NULL){
+        printf("List is empty\n");
+    }
+    else if (pos==1)
+    {
+        deletenodefrombeg();
+    }
+    else{
+        struct Node* temp = head;
+        int i=1;
+        while(i<pos-1 && temp->next != head){
+            temp = temp->next;
+            i++;
+        } 
+        if(temp->next != head && pos>0){
+            struct Node* t = temp->next;
+            temp->next = temp->next->next;
+            free(t);
+            printf("Node Deleted !!!\n");
+        }
+            else{
+                printf("Position not found");
+            }
+    }
+
+}
+void searchnode(int ele){
+    if(head == NULL)
+        printf("List is Empty !!!\n");
+    else{
+        struct Node* temp = head;
+        do{
+            if(temp->data == ele){
+                printf("Element found\n");
+                return;
+            }
+            temp = temp->next;
+        }while(temp != head);
+        printf("Element not found !!!\n");
+    }
+
+}
+void display(){
+    if(head == NULL)
+        printf("List is Empty !!!\n");
+    else{
+        struct Node* temp = head;
+        do{
+            printf("%d ",temp-> data);
+            temp = temp->next;
+        }while(temp != head);
+    }
+    printf("\n");
+
+}
+int main(){
+    while (1){
+        printf("---------Circular Singly Linked List----------\n");
+        printf("1. Inset node  in begining\n");
+        printf("2. Inset node  at end\n");
+        printf("3. Inset node  at any position\n");
+        printf("4. Delete node from begining\n");
+        printf("5. Delete node from end\n");
+        printf("6. Delete node from any position\n");
+        printf("7. Search element in list\n");
+        printf("8. Display list\n");
+        printf("9. Exit\n");
+        
+        int choice, data, priority;
+        printf("Enter Choice : ");
+        scanf("%d", &choice);
+        switch (choice){
+            case 1:
+                printf("Enter element to insert in begining : ");
+                scanf("%d", &data);
+                insertnodeinbeg(data);
+            break;
+            case 2:
+                printf("Enter element to insert in end : ");
+                scanf("%d", &data);
+                insertnodeinend(data);
+            break;
+            case 3:
+                printf("Enter element to insert in any position : ");
+                scanf("%d", &data);
+                printf("Enter position : ");
+                scanf("%d", &priority);
+                insertnodeinanypos(data, priority);
+            break;
+            case 4:
+                deletenodefrombeg();    
+            break;
+            case 5:
+                deletenodefromend();
+            break;
+            case 6:
+                printf("Enter position : ");
+                scanf("%d", &priority);
+                deletenodefromanypos(priority);
+            break;
+            case 7:
+                printf("Enter element to search : ");
+                scanf("%d", &data);
+                searchnode(data);
+            break;
+            case 8:
+                printf("List is : ");
+                display();
+            break;
+            case 9:
+                exit(0);
+            default:
+            printf("Invalid Choice !!!\n");
+        }
+        printf("\n");
+    }
+    return 0;
+}
